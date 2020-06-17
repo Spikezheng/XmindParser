@@ -1,23 +1,27 @@
 <template>
     <div id="app">
-        <el-steps :active="active" finish-status="success">
+        <el-steps :active="active" align-center>
             <el-step title="事项"></el-step>
             <el-step title="申办资格审核"></el-step>
             <el-step title="业务咨询"></el-step>
             <el-step title="业务办理"></el-step>
         </el-steps>
         <el-form ref="form" :model="form" label-width="80px">
-    
+
             <!--1-->
             <div class="info" v-if="active==1">
-                <el-form-item label="事项名称">
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">事项名称</span>
+                    </div>
                     <el-autocomplete
                     popper-class="form-autocomplete"
                     v-model="form.name"
                     :fetch-suggestions="queryFormNameSearch"
                     placeholder="请输入事项名称"
-                    @select="handleFormNameSelect"
-                    >
+                    @select="handleSelect"
+                    >   
                     <i
                     class="el-icon-edit el-input__icon"
                     slot="suffix"
@@ -26,89 +30,158 @@
                     <div class="name">{{ formNames.item.value }}</div>
                     </template>
                     </el-autocomplete>
-                    </el-input>
+                    </el-card>
                 </el-form-item>
 
-                <el-form-item label="事项代码">
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">事项代码</span>
+                    </div>
                     <el-autocomplete
                     popper-class="form-autocomplete"
                     v-model="form.code"
-                    :fetch-suggestions="queryFormNameSearch"
+                    :fetch-suggestions="queryFormCodeSearch"
                     placeholder="请输入事项代码"
-                    @select="handleFormNameSelect"
+                    @select="handleSelect"
                     >
                     <i
                     class="el-icon-edit el-input__icon"
                     slot="suffix"
                     @click="handleIconClick"></i>
-                    <template slot-scope="formNames">
-                    <div class="name">{{ formNames.item.value }}</div>
+                    <template slot-scope="formCodes">
+                    <div class="name">{{ formCodes.item.value }}</div>
                     </template>
                     </el-autocomplete>
-                    </el-input>
+                    </el-card>
                 </el-form-item>
 
-                <el-form-item label="事项内容（待遇标准）">
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">事项内容(待遇标准)</span>
+                    </div>
                     <el-input type="textarea" v-model="form.content"></el-input>
+                    </el-card>
                 </el-form-item>
                 <div><br />
-                    <h4>政策依据（文件名、文号)</h4>
+                    <h4 style="font-size: 30px; font-weight: bold">政策依据(文件名、文号)</h4>
                 </div>
-                <el-form-item label="文件名">
-                    <el-input type="textarea" v-model="form.fileName"></el-input>
+                <el-form-item>
+                    <el-card class="box-card">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">文件名</span>
+                    </div>
+                    <el-autocomplete
+                    popper-class="form-autocomplete"
+                    v-model="form.fileName"
+                    :fetch-suggestions="queryFormFileNameSearch"
+                    placeholder="请输入文件名"
+                    @select="handleSelect"
+                    >
+                    <i
+                    class="el-icon-edit el-input__icon"
+                    slot="suffix"
+                    @click="handleIconClick"></i>
+                    <template slot-scope="formFileNames">
+                    <div class="name">{{ formFileNames.item.value }}</div>
+                    </template>
+                    </el-autocomplete>
+                    </el-card>
                 </el-form-item>
-                <el-form-item label="文号">
-                    <el-input v-model="form.number"></el-input>
+
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">文号</span>
+                    </div>
+                    <el-autocomplete
+                    popper-class="form-autocomplete"
+                    v-model="form.number"
+                    :fetch-suggestions="queryNumberSearch"
+                    placeholder="请输入文号"
+                    @select="handleSelect"
+                    >
+                    <i
+                    class="el-icon-edit el-input__icon"
+                    slot="suffix"
+                    @click="handleIconClick"></i>
+                    <template slot-scope="numbers">
+                    <div class="name">{{ numbers.item.value }}</div>
+                    </template>
+                    </el-autocomplete>
+                    </el-card>
                 </el-form-item>
             </div>
     
             <!--2-->
             <div class="info" v-if="active==2">
     
-                <el-form-item label="申办所需资格条件">
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">申办所需资格条件</span>
+                    </div>
                     <div v-for="(conList,index) in form.condition">
                         <el-input type="text" v-model="conList.con">
                             <el-button slot="append" icon="el-icon-delete" @click="delcon(index)"></el-button>
-    
                         </el-input>
-                    </div>
+                    </div>                    
                     <el-button type="primary" @click="addcon">添加条件</el-button>
+                    </el-card>
                 </el-form-item>
-                <el-form-item label="申办材料">
+
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">申办材料</span>
+                    </div>
                     <div v-for="(paperList,index) in form.paper">
                         <el-input type="text" v-model="paperList.pap">
                             <el-button slot="append" icon="el-icon-delete" @click="delpap(index)"></el-button>
                         </el-input><br/>
                     </div>
                     <el-button type="primary" @click="addpap">添加材料</el-button>
+                    </el-card>
                 </el-form-item>
-                
-                    <div><br />
-                    <h4>审核时限</h4>
-                </div>
-                <el-form-item label="审核时限">
+
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">审核时限</span>
+                    </div>
                     <el-select v-model="form.date" placeholder="请选择">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label":value="item.value" >
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" >
                         </el-option>
                     </el-select>
-    
-    
-    
+                    </el-card>
                 </el-form-item>
             </div>
     
             <!--3-->
             <div class="info" v-if="active==3">
-                <el-form-item label="网络咨询平台（点击上传图片）">
+                
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">网络咨询平台(点击上传图片)</span>
+                    </div>
                     <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :on-change="onchange" :before-upload="beforeAvatarUpload"> <img v-if="imageUrl" :src="imageUrl" class="avatar"> <i v-else class="el-icon-plus avatar-uploader-icon"></i> </el-upload>
+                    </el-card>
                 </el-form-item>
-                <el-form-item label="咨询电话">
+
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">咨询电话</span>
+                    </div>
                     <div v-for="(list,index) in form.phoneNumber">
                         <el-input v-model="list.a">
                             <el-button slot="append" icon="el-icon-delete" @click="del(index)"></el-button>
                         </el-input> <br/>
                     </div>
                     <el-button type="primary" @click="add">添加电话</el-button>
+                    </el-card>
                 </el-form-item>
             </div>
     
@@ -116,17 +189,27 @@
             <!--4-->
             <div class="info" v-if="active==4">
     
-                <el-form-item label="业务办理二维码（点击上传图片）">
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">业务办理二维码(点击上传图片)</span>
+                    </div>
                     <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess2" :on-change="onchange2" :before-upload="beforeAvatarUpload"> <img v-if="imageUrl2" :src="imageUrl2" class="avatar"> <i v-else class="el-icon-plus avatar-uploader-icon"></i> </el-upload>
+                    </el-card>
                 </el-form-item>
-                <el-form-item label="办事大厅地址">
+
+                <el-form-item>
+                    <el-card class="box-card" shadow="hover">
+                    <div slot="header" class="clearfix">
+                    <span id="spanName">办事大厅地址</span>
+                    </div>
                     <div v-for="(List,index) in form.address">
                         <el-input type="text" v-model="List.b">
                             <el-button slot="append" icon="el-icon-delete" @click="del2(index)"></el-button>
                         </el-input><br/>
                     </div>
                     <el-button type="primary" @click="add2">添加地址</el-button>
-    
+                    </el-card>
                 </el-form-item>
                 <div><br/>
                     <el-button type="primary" @click="onSubmit1">保存提交</el-button>
@@ -147,7 +230,6 @@ export default {
 
     data() {
         return {
-            restaurants: [],
             dialogImageUrl: '',
             imageUrl: '',
             imageUrl2: '',
@@ -178,7 +260,10 @@ export default {
                 date:'',
             },
 
-            formNames: [],
+            formNames: [],  //记录cookie中的事项名称
+            formCodes: [],  //记录cookie中的事项代码
+            formFileNames: [],  //记录cookie中的文件名
+            numbers: [],    //记录cookie中的文号
         }
     },
     methods: {
@@ -300,9 +385,14 @@ export default {
 
 
         next() {
-            if (this.active == 3) this.active = 1;
-            if(this.active == 1)
+            if (this.active > 4) this.active = 1;
+            if(this.active == 1){
                 this.$options.methods.setCookie("formNames", this.form.name, 1, this.formNames);
+                this.$options.methods.setCookie("formCodes", this.form.code, 1, this.formCodes);
+                this.$options.methods.setCookie("formFileNames", this.form.fileName, 1, this.formFileNames);
+                this.$options.methods.setCookie("numbers", this.form.number, 1, this.numbers);
+            }
+            this.active ++;
         },
         pre() {
             if (this.active-- < 1) this.active = 1;
@@ -311,6 +401,27 @@ export default {
         //判断项目名称输入框的输入内容筛选列表数据
         queryFormNameSearch(queryString, cb) {
             var formNames = this.formNames;
+            var results = queryString ? formNames.filter(this.createFilter(queryString)) : formNames;
+            // 调用 callback 返回建议列表的数据
+            cb(results);
+        },
+
+        queryFormCodeSearch(queryString, cb) {
+            var formNames = this.formCodes;
+            var results = queryString ? formNames.filter(this.createFilter(queryString)) : formNames;
+            // 调用 callback 返回建议列表的数据
+            cb(results);
+        },
+
+        queryFormFileNameSearch(queryString, cb) {
+            var formNames = this.formFileNames;
+            var results = queryString ? formNames.filter(this.createFilter(queryString)) : formNames;
+            // 调用 callback 返回建议列表的数据
+            cb(results);
+        },
+
+        queryNumberSearch(queryString, cb) {
+            var formNames = this.numbers;
             var results = queryString ? formNames.filter(this.createFilter(queryString)) : formNames;
             // 调用 callback 返回建议列表的数据
             cb(results);
@@ -325,7 +436,7 @@ export default {
 
         //设置浏览器保存输入的近期记录
         setCookie(cname, cvalue, exdays, formNames){
-            console.log(cname);
+            if(cvalue == null || cvalue == "" || cvalue == undefined)return;
             console.log(cvalue);
             cvalue = "--" + cvalue;
             if(formNames.length == 10){
@@ -363,9 +474,10 @@ export default {
         },
 
 
-        handleFormNameSelect(item) {
+        handleSelect(item) {
             console.log(item);
         },
+
 
         handleIconClick(ev) {
             console.log(ev);
@@ -374,13 +486,60 @@ export default {
         
     mounted() {
         this.formNames = this.getCookie("formNames");
-        console.log(this.formNames);
+        this.formCodes = this.getCookie("formCodes");
+        this.formFileNames = this.getCookie("formFileNames");
+        this.numbers = this.getCookie("numbers");
+        // console.log(this.formNames);
     }
 
 }
 </script>
 
 <style>
+#app{
+    width: 90%;
+    margin: 0px auto;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+#spanName{
+    font-size: 25px;
+    font-weight: bold;
+    color: #409EFF;
+}
+
+.el-select{
+    width: 100%
+}
+
+.el-steps.el-steps--horizontal{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.el-step__line{
+    height: 200px;
+}
+
+.el-step__icon.is-text{
+    width: 44px;
+    height: 44px;
+}
+
+.el-form-item__content{
+    margin-right: 80px;
+}
+
+.el-autocomplete{
+    width: 100%;
+}
+
+
+.el-card{
+    border: 2px solid #409EFF;
+}
+
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
